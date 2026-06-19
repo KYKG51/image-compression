@@ -1,6 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { ImagePreset, GlobalSettings } from '../types';
-import { LayoutGrid, AppWindow, Square, Image, FileText, Plus, Trash2, Sliders } from 'lucide-react';
+import { 
+  LayoutGrid, 
+  AppWindow, 
+  Square, 
+  Image, 
+  FileText, 
+  Plus, 
+  Trash2, 
+  Sliders, 
+  Smartphone, 
+  Sparkles, 
+  Layers, 
+  RotateCcw 
+} from 'lucide-react';
 
 interface PresetSelectorProps {
   currentSettings: GlobalSettings;
@@ -41,6 +54,37 @@ const DEFAULT_PRESETS: ImagePreset[] = [
     maxSizeKB: 400, // 400KB
     isCustom: false,
   },
+  {
+    id: 'graphic',
+    name: '图文',
+    width: 1280,
+    height: 1706,
+    maxSizeKB: 500, // 500KB
+    isCustom: false,
+  },
+  {
+    id: 'landing_page',
+    name: '落地页',
+    widthMode: 'ratio_9_16',
+    maxSizeKB: 500, // 500KB
+    isCustom: false,
+  },
+  {
+    id: 'top_image',
+    name: '顶图',
+    width: 1280,
+    height: 640,
+    maxSizeKB: 500, // 500KB
+    isCustom: false,
+  },
+  {
+    id: 'collage_image',
+    name: '套图',
+    width: 1242,
+    height: 2070,
+    maxSizeKB: 500, // 500KB
+    isCustom: false,
+  },
 ];
 
 export default function PresetSelector({
@@ -61,25 +105,37 @@ export default function PresetSelector({
 
   // Load presets from localStorage + defaults
   useEffect(() => {
-    const saved = localStorage.getItem('image_compress_presets');
+    const saved = localStorage.getItem('image_compress_presets_v3');
     if (saved) {
       try {
         const parsed = JSON.parse(saved) as ImagePreset[];
-        // Filter out any default conflicts
-        const customs = parsed.filter((p) => p.isCustom);
-        setPresets([...DEFAULT_PRESETS, ...customs]);
+        setPresets(parsed);
       } catch (e) {
         setPresets(DEFAULT_PRESETS);
       }
     } else {
-      setPresets(DEFAULT_PRESETS);
+      // First time loading: try to migrate custom ones if possible, otherwise write new defaults
+      const oldKeys = ['image_compress_presets_v2', 'image_compress_presets'];
+      let migratedCustoms: ImagePreset[] = [];
+      for (const oldKey of oldKeys) {
+        const oldSaved = localStorage.getItem(oldKey);
+        if (oldSaved) {
+          try {
+            const parsedOld = JSON.parse(oldSaved) as ImagePreset[];
+            migratedCustoms = parsedOld.filter((p) => p.isCustom);
+            if (migratedCustoms.length > 0) break;
+          } catch (e) {}
+        }
+      }
+      const initial = [...DEFAULT_PRESETS, ...migratedCustoms];
+      setPresets(initial);
+      localStorage.setItem('image_compress_presets_v3', JSON.stringify(initial));
     }
   }, []);
 
   const savePresets = (updatedPresets: ImagePreset[]) => {
     setPresets(updatedPresets);
-    const customs = updatedPresets.filter((p) => p.isCustom);
-    localStorage.setItem('image_compress_presets', JSON.stringify(customs));
+    localStorage.setItem('image_compress_presets_v3', JSON.stringify(updatedPresets));
   };
 
   const handleApply = (preset: ImagePreset) => {
@@ -127,6 +183,12 @@ export default function PresetSelector({
     }
   };
 
+  const handleRestoreDefaults = () => {
+    const customs = presets.filter((p) => p.isCustom);
+    const updated = [...DEFAULT_PRESETS, ...customs];
+    savePresets(updated);
+  };
+
   // Preset icons mapping
   const getPresetIcon = (id: string) => {
     switch (id) {
@@ -138,6 +200,14 @@ export default function PresetSelector({
         return <Square className="w-4 h-4 text-purple-500" />;
       case 'landscape':
         return <Image className="w-4 h-4 text-orange-500" />;
+      case 'graphic':
+        return <FileText className="w-4 h-4 text-pink-500" />;
+      case 'landing_page':
+        return <Smartphone className="w-4 h-4 text-teal-500" />;
+      case 'top_image':
+        return <Sparkles className="w-4 h-4 text-amber-500" />;
+      case 'collage_image':
+        return <Layers className="w-4 h-4 text-violet-500" />;
       default:
         return <Sliders className="w-4 h-4 text-slate-500" />;
     }
@@ -150,21 +220,33 @@ export default function PresetSelector({
           <Sliders className="w-4 h-4 text-indigo-500" />
           一键预设配置
         </h3>
-        {!isAdding && (
+        <div className="flex items-center gap-1.5">
           <button
-            id="btn-trigger-add-preset"
+            id="btn-restore-default-presets"
             type="button"
-            onClick={() => setIsAdding(true)}
-            className="text-xs flex items-center gap-1 text-indigo-600 hover:text-indigo-800 transition-colors font-medium px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100"
+            onClick={handleRestoreDefaults}
+            className="text-[10px] text-slate-500 hover:text-indigo-650 hover:bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded transition-all flex items-center gap-0.5"
+            title="恢复默认的 8 个常用预设"
           >
-            <Plus className="w-3.5 h-3.5" />
-            新建预设
+            <RotateCcw className="w-3 h-3" />
+            恢复默认
           </button>
-        )}
+          {!isAdding && (
+            <button
+              id="btn-trigger-add-preset"
+              type="button"
+              onClick={() => setIsAdding(true)}
+              className="text-xs flex items-center gap-1 text-indigo-600 hover:text-indigo-800 transition-colors font-medium px-2 py-1 rounded bg-indigo-50 hover:bg-indigo-100"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              新建预设
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Preset List Grid Wrap for Scrollability */}
-      <div id="presets-list-scroll-wrapper" className="max-h-[170px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200">
+      <div id="presets-list-scroll-wrapper" className="max-h-[280px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-slate-200">
         <div className="grid grid-cols-2 gap-2 pb-1">
           {presets.map((preset) => {
             const isActive = activePresetId === preset.id;
@@ -173,7 +255,7 @@ export default function PresetSelector({
                 id={`preset-card-${preset.id}`}
                 key={preset.id}
                 onClick={() => handleApply(preset)}
-                className={`relative flex flex-col justify-between p-3 rounded-xl border text-left cursor-pointer transition-all duration-200 ${
+                className={`relative group flex flex-col justify-between p-3 rounded-xl border text-left cursor-pointer transition-all duration-200 ${
                   isActive
                     ? 'border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-100'
                     : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'
@@ -185,16 +267,14 @@ export default function PresetSelector({
                     {preset.name}
                   </span>
 
-                  {preset.isCustom && (
-                    <button
-                      id={`btn-delete-preset-${preset.id}`}
-                      onClick={(e) => handleDeletePreset(preset.id, e)}
-                      className="p-1 rounded text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors flex-shrink-0"
-                      title="删除预设"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <button
+                    id={`btn-delete-preset-${preset.id}`}
+                    onClick={(e) => handleDeletePreset(preset.id, e)}
+                    className="p-1 rounded text-slate-350 hover:text-rose-500 hover:bg-rose-50 transition-all flex-shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100 lg:opacity-100"
+                    title="删除预设"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
 
                 <div className="space-y-0.5 text-[11px] text-slate-500">
