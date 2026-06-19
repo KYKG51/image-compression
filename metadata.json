@@ -1,0 +1,6 @@
+{
+  "name": "图片压缩与尺寸调整工具",
+  "description": "一个功能强大的图片无损压缩与尺寸修改工具，支持批量处理、一键预设以及打包下载。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
