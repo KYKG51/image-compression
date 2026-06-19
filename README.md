@@ -1,20 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 图片智能压缩与缩放
 
-# Run and deploy your AI Studio app
+一款完全运行在浏览器本地的批量图片处理工具，无需上传至服务器，保障隐私安全。支持多图批量压缩、智能尺寸缩放、格式转换，并提供一键打包下载（ZIP）功能。
 
-This contains everything you need to run your app locally.
+## 功能特性
 
-View your app in AI Studio: https://ai.studio/apps/4981011b-6508-4da1-9b03-c3ef005850bd
+- **批量处理** — 支持同时拖入数百张图片，逐批压缩转码，流畅无卡顿
+- **多种压缩模式** — 无损压缩、有损压缩（自定义质量）、目标文件大小压缩
+- **灵活的尺寸缩放** — 保留原始比例、精确宽高、16:9 / 9:16 比例裁剪
+- **格式转换** — 输出 PNG、JPEG、WebP 格式
+- **一键预设** — 内置九图、Icon 图标、横图、落地页等 8 种常用预设，支持自定义新增
+- **ZIP 打包下载** — 处理完成后一键将所有图片打包为 ZIP 压缩包下载
+- **对比预览** — 支持点击单张图片查看原图与压缩后的尺寸和体积对比
+- **本地安全** — 全部处理在浏览器端通过 Canvas 硬件加速完成，不上传任何数据
 
-## Run Locally
+## 本地运行
 
-**Prerequisites:**  Node.js
+**前置条件：** Node.js
 
+1. 安装依赖：
+   ```
+   npm install
+   ```
+2. 启动开发服务器：
+   ```
+   npm run dev
+   ```
+3. 打开浏览器访问 `http://localhost:3000`
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 技术栈
+
+- **React 19** + **TypeScript**
+- **Vite 6** 构建工具
+- **Tailwind CSS 4** 样式
+- **JSZip** ZIP 打包
+- **Lucide React** 图标库
+- **Canvas API** 图片转码与压缩核心
