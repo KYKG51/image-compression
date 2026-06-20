@@ -43,14 +43,32 @@ export function calculateDimensions(
       break;
 
     case 'ratio_16_9': {
-      width = 1920;
-      height = 1080;
+      const targetRatio = 16 / 9;
+      const currentRatio = origWidth / origHeight;
+      if (currentRatio > targetRatio) {
+        // Wider than 16:9, keep height, scale width
+        height = origHeight;
+        width = Math.round(origHeight * targetRatio);
+      } else {
+        // Taller than 16:9, keep width, scale height
+        width = origWidth;
+        height = Math.round(origWidth / targetRatio);
+      }
       break;
     }
 
     case 'ratio_9_16': {
-      width = 1080;
-      height = 1920;
+      const targetRatio = 9 / 16;
+      const currentRatio = origWidth / origHeight;
+      if (currentRatio > targetRatio) {
+        // Wider than 9:16, keep height, scale width
+        height = origHeight;
+        width = Math.round(origHeight * targetRatio);
+      } else {
+        // Taller than 9:16, keep width, scale height
+        width = origWidth;
+        height = Math.round(origWidth / targetRatio);
+      }
       break;
     }
 

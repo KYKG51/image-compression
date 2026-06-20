@@ -118,7 +118,7 @@ export default function BatchSettings({
               智能比例裁剪与保真运算
             </p>
             <p className="text-[10px] text-slate-600 leading-relaxed font-medium">
-              将直接 center-crop (中心裁剪) 并调整大小为标准 {settings.widthMode === 'ratio_16_9' ? '16:9 (1920x1080)' : '9:16 (1080x1920)'} 规定尺寸，完美适配各种主流播放、展示场景。
+              将直接 center-crop (中心裁剪) 为标准的 {settings.widthMode === 'ratio_16_9' ? '16:9' : '9:16'} 比例，智能根据原图大小进行裁剪（保留最大可能分辨率，避免拉伸与非必要缩放）。
             </p>
           </div>
         )}
