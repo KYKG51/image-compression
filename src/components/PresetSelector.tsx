@@ -27,7 +27,7 @@ const DEFAULT_PRESETS: ImagePreset[] = [
     name: '九图',
     width: 2400,
     height: 2400,
-    maxSizeKB: 10240, // 10MB
+    maxSizeKB: 20480, // 20MB
     isCustom: false,
   },
   {
@@ -40,7 +40,7 @@ const DEFAULT_PRESETS: ImagePreset[] = [
   },
   {
     id: 'component',
-    name: '组件图',
+    name: '组件',
     width: 800,
     height: 800,
     maxSizeKB: 400, // 400KB
@@ -48,7 +48,7 @@ const DEFAULT_PRESETS: ImagePreset[] = [
   },
   {
     id: 'landscape',
-    name: '横图、结束页',
+    name: '横图、可玩',
     width: 1280,
     height: 720,
     maxSizeKB: 400, // 400KB
@@ -105,7 +105,7 @@ export default function PresetSelector({
 
   // Load presets from localStorage + defaults
   useEffect(() => {
-    const saved = localStorage.getItem('image_compress_presets_v3');
+    const saved = localStorage.getItem('image_compress_presets_v4');
     if (saved) {
       try {
         const parsed = JSON.parse(saved) as ImagePreset[];
@@ -115,7 +115,7 @@ export default function PresetSelector({
       }
     } else {
       // First time loading: try to migrate custom ones if possible, otherwise write new defaults
-      const oldKeys = ['image_compress_presets_v2', 'image_compress_presets'];
+      const oldKeys = ['image_compress_presets_v3', 'image_compress_presets_v2', 'image_compress_presets'];
       let migratedCustoms: ImagePreset[] = [];
       for (const oldKey of oldKeys) {
         const oldSaved = localStorage.getItem(oldKey);
@@ -129,13 +129,13 @@ export default function PresetSelector({
       }
       const initial = [...DEFAULT_PRESETS, ...migratedCustoms];
       setPresets(initial);
-      localStorage.setItem('image_compress_presets_v3', JSON.stringify(initial));
+      localStorage.setItem('image_compress_presets_v4', JSON.stringify(initial));
     }
   }, []);
 
   const savePresets = (updatedPresets: ImagePreset[]) => {
     setPresets(updatedPresets);
-    localStorage.setItem('image_compress_presets_v3', JSON.stringify(updatedPresets));
+    localStorage.setItem('image_compress_presets_v4', JSON.stringify(updatedPresets));
   };
 
   const handleApply = (preset: ImagePreset) => {
