@@ -540,7 +540,7 @@ export default function App() {
             </svg>
           </div>
           <h1 className="text-md sm:text-lg font-bold tracking-tight text-slate-800 flex items-center gap-2">
-            图片智能压缩与缩放
+            图片智能压缩和缩放
           </h1>
         </div>
 
