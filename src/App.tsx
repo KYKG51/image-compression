@@ -357,16 +357,17 @@ export default function App() {
     let base = lastDotIdx !== -1 ? filename.substring(0, lastDotIdx) : filename;
     
     // Choose ext based on actual formatted output blob
-    let ext = 'png';
+    let ext = '';
     if (item.processedBlob.type === 'image/jpeg') ext = 'jpg';
     else if (item.processedBlob.type === 'image/webp') ext = 'webp';
     else if (item.processedBlob.type === 'image/png') ext = 'png';
     else {
       // Fallback
-      ext = lastDotIdx !== -1 ? filename.substring(lastDotIdx + 1) : 'png';
+      ext = lastDotIdx !== -1 ? filename.substring(lastDotIdx + 1) : '';
     }
 
-    const outputName = `${base}_optimized.${ext}`;
+    // Keep original filename, only adapting the file extension to match actual output format
+    const outputName = ext ? `${base}.${ext}` : filename;
 
     const link = document.createElement('a');
     link.href = item.processedUrl;
@@ -397,17 +398,21 @@ export default function App() {
         const lastDotIdx = filename.lastIndexOf('.');
         let base = lastDotIdx !== -1 ? filename.substring(0, lastDotIdx) : filename;
         
-        let ext = 'png';
+        let ext = '';
         if (item.processedBlob!.type === 'image/jpeg') ext = 'jpg';
         else if (item.processedBlob!.type === 'image/webp') ext = 'webp';
         else if (item.processedBlob!.type === 'image/png') ext = 'png';
+        else {
+          ext = lastDotIdx !== -1 ? filename.substring(lastDotIdx + 1) : '';
+        }
 
-        let itemOutputName = `${base}_optimized.${ext}`;
+        // Keep original filename, adapting extension if format was changed
+        let itemOutputName = ext ? `${base}.${ext}` : filename;
         
         // Handle deduplication of filenames within same zip
         let i = 1;
         while (usedNames.has(itemOutputName)) {
-          itemOutputName = `${base}_optimized_${i}.${ext}`;
+          itemOutputName = ext ? `${base}_${i}.${ext}` : `${filename}_${i}`;
           i++;
         }
         usedNames.add(itemOutputName);
